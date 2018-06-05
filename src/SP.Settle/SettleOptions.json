@@ -1,0 +1,26 @@
+﻿{
+  "Alipay": {
+    "Gateway": "https://openapi.alipay.com/gateway.do",
+    "PayNotifyUrl": "http://xxx/callback/charge/alipay",
+    "AppId": "2018051460144496"
+  },
+  "WeChat": {
+    "Gateway": "https://api.mch.weixin.qq.com",
+    "PayNotifyUrl": "http://xxx/callback/charge/wxpay",
+    "AppId": "wx655b54dbeb7ac9eb",
+    "MchId": "1277324501",
+    "Key": "36F90AE7FB6C4F5BA2319973943D5C69",
+    "Appsecret": "dd4f31b29a8044841b19bf6bee0f4d2e",
+    "SslCertPassword": "1277324501"
+  },
+  "JdPay": {
+    "Gateway": "https://h5pay.jd.com/jdpay/saveOrder",
+    "PayNotifyUrl": "http://xxx/callback/charge/jdpay",
+    "Merchant": "22294531",
+    "Key": "ta4E/aspLA3lgFGKmNDNRYU92RkZ4w2t"
+  },
+  "ApplePay": {
+    "VerifyUrl": "https://sandbox.itunes.apple.com/verifyReceipt"
+  },
+  "ShowUrl": "http://xxx/callback/charge/success"
+}
