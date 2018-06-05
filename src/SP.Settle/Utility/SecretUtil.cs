@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -38,7 +39,7 @@ namespace Sp.Settle.Utility
 
         #region RSA
 
-        public static string RsaSign(string data, string privateKey)
+        public static string RsaSign256(string data, string privateKey)
         {
             var rsaCsp = DecodeRsaPrivateKey(Convert.FromBase64String(privateKey));
             var dataBytes = Encoding.UTF8.GetBytes(data);
@@ -46,7 +47,15 @@ namespace Sp.Settle.Utility
             return Convert.ToBase64String(signatureBytes);
         }
 
-        public static bool RsaVerify(string data, string sign, string publicKey)
+        public static string RsaSign1(RSA provider, string data)
+        {
+            var dataBytes = Encoding.UTF8.GetBytes(data);
+            var signatureBytes = provider.SignData(dataBytes, 0, dataBytes.Length, HashAlgorithmName.SHA1,
+                RSASignaturePadding.Pkcs1);
+            return Convert.ToBase64String(signatureBytes);
+        }
+
+        public static bool RsaVerify256(string data, string sign, string publicKey)
         {
             var rsaCsp = DecodeRsaPublicKey(publicKey);
             var dataBytes = Encoding.UTF8.GetBytes(data);
@@ -54,7 +63,91 @@ namespace Sp.Settle.Utility
             return rsaCsp.VerifyData(dataBytes, signBytes, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
         }
 
-        public static RSACryptoServiceProvider DecodeRsaPublicKey(string publicKeyString)
+        public static bool RsaVerify1(RSA provider, string content, string sign)
+        {
+            var data = Convert.FromBase64String(sign);
+            return provider.VerifyData(Encoding.UTF8.GetBytes(content), data, HashAlgorithmName.SHA1,
+                RSASignaturePadding.Pkcs1);
+        }
+
+        public static bool RsaVerify1(string content, string sign, byte[] x509Key)
+        {
+            var data = Convert.FromBase64String(sign);
+            var provider = DecodeX509PublicKey(x509Key);
+            return provider.VerifyData(Encoding.UTF8.GetBytes(content), data, HashAlgorithmName.SHA1,
+                RSASignaturePadding.Pkcs1);
+        }
+        private static RSA DecodeX509PublicKey(byte[] x509Key)
+        {
+            byte[] seqOid = { 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x01 };
+
+            var ms = new MemoryStream(x509Key);
+            var reader = new BinaryReader(ms);
+
+            if (reader.ReadByte() == 0x30)
+                ReadAsnLength(reader); //skip the size
+            else
+                return null;
+
+            int identifierSize; //total length of Object Identifier section
+            if (reader.ReadByte() == 0x30)
+                identifierSize = ReadAsnLength(reader);
+            else
+                return null;
+
+            if (reader.ReadByte() == 0x06) //is the next element an object identifier?
+            {
+                var oidLength = ReadAsnLength(reader);
+                var oidBytes = new byte[oidLength];
+                reader.Read(oidBytes, 0, oidBytes.Length);
+                if (oidBytes.SequenceEqual(seqOid) == false) //is the object identifier rsaEncryption PKCS#1?
+                    return null;
+
+                var remainingBytes = identifierSize - 2 - oidBytes.Length;
+                reader.ReadBytes(remainingBytes);
+            }
+
+            if (reader.ReadByte() == 0x03) //is the next element a bit string?
+            {
+                ReadAsnLength(reader); //skip the size
+                reader.ReadByte(); //skip unused bits indicator
+                if (reader.ReadByte() == 0x30)
+                {
+                    ReadAsnLength(reader); //skip the size
+                    if (reader.ReadByte() == 0x02) //is it an integer?
+                    {
+                        var modulusSize = ReadAsnLength(reader);
+                        var modulus = new byte[modulusSize];
+                        reader.Read(modulus, 0, modulus.Length);
+                        if (modulus[0] == 0x00) //strip off the first byte if it's 0
+                        {
+                            var tempModulus = new byte[modulus.Length - 1];
+                            Array.Copy(modulus, 1, tempModulus, 0, modulus.Length - 1);
+                            modulus = tempModulus;
+                        }
+
+                        if (reader.ReadByte() == 0x02) //is it an integer?
+                        {
+                            var exponentSize = ReadAsnLength(reader);
+                            var exponent = new byte[exponentSize];
+                            reader.Read(exponent, 0, exponent.Length);
+
+                            var rsa = RSA.Create();
+                            var rsaKeyInfo = new RSAParameters
+                            {
+                                Modulus = modulus,
+                                Exponent = exponent
+                            };
+                            rsa.ImportParameters(rsaKeyInfo);
+                            return rsa;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        private static RSACryptoServiceProvider DecodeRsaPublicKey(string publicKeyString)
         {
             // encoded OID sequence for  PKCS #1 rsaEncryption szOID_RSA_RSA = "1.2.840.113549.1.1.1"
             byte[] seqOid = {0x30, 0x0D, 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x01, 0x05, 0x00};
@@ -155,7 +248,7 @@ namespace Sp.Settle.Utility
             }
         }
 
-        public static RSACryptoServiceProvider DecodeRsaPrivateKey(byte[] privkey)
+        private static RSACryptoServiceProvider DecodeRsaPrivateKey(byte[] privkey)
         {
             using (var stream = new MemoryStream(privkey))
             {
@@ -219,7 +312,21 @@ namespace Sp.Settle.Utility
             }
         }
 
-
+        private static int ReadAsnLength(BinaryReader reader)
+        {
+            //Note: this method only reads lengths up to 4 bytes long as
+            //this is satisfactory for the majority of situations.
+            int length = reader.ReadByte();
+            if ((length & 0x00000080) == 0x00000080) //is the length greater than 1 byte
+            {
+                var count = length & 0x0000000f;
+                var lengthBytes = new byte[4];
+                reader.Read(lengthBytes, 4 - count, count);
+                Array.Reverse(lengthBytes); //
+                length = BitConverter.ToInt32(lengthBytes, 0);
+            }
+            return length;
+        }
         private static int GetIntegerSize(BinaryReader binr)
         {
             int count;
@@ -527,6 +634,76 @@ namespace Sp.Settle.Utility
 
         #endregion
 
+        #endregion
+
+        #region Rc4
+        internal static class Rc4
+        {
+            public static string Encrypt(string key, string data)
+            {
+                var unicode = Encoding.GetEncoding("GBK");
+
+                return Convert.ToBase64String(Encrypt(unicode.GetBytes(key), unicode.GetBytes(data)));
+            }
+
+            public static string Decrypt(string key, string data)
+            {
+                var unicode = Encoding.GetEncoding("GBK");
+
+                return unicode.GetString(Encrypt(unicode.GetBytes(key), Convert.FromBase64String(data)));
+            }
+
+            public static byte[] Encrypt(byte[] key, byte[] data)
+            {
+                return EncryptOutput(key, data).ToArray();
+            }
+
+            public static byte[] Decrypt(byte[] key, byte[] data)
+            {
+                return EncryptOutput(key, data).ToArray();
+            }
+
+            private static byte[] EncryptInitalize(byte[] key)
+            {
+                var s = Enumerable.Range(0, 256)
+                    .Select(i => (byte)i)
+                    .ToArray();
+
+                for (int i = 0, j = 0; i < 256; i++)
+                {
+                    j = (j + key[i % key.Length] + s[i]) & 255;
+
+                    Swap(s, i, j);
+                }
+
+                return s;
+            }
+
+            private static IEnumerable<byte> EncryptOutput(byte[] key, IEnumerable<byte> data)
+            {
+                var s = EncryptInitalize(key);
+
+                var i = 0;
+                var j = 0;
+
+                return data.Select(b =>
+                {
+                    i = (i + 1) & 255;
+                    j = (j + s[i]) & 255;
+
+                    Swap(s, i, j);
+
+                    return (byte)(b ^ s[(s[i] + s[j]) & 255]);
+                });
+            }
+
+            private static void Swap(byte[] s, int i, int j)
+            {
+                var c = s[i];
+                s[i] = s[j];
+                s[j] = c;
+            }
+        }
         #endregion
     }
 }

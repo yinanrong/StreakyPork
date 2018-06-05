@@ -22,5 +22,8 @@
   "ApplePay": {
     "VerifyUrl": "https://sandbox.itunes.apple.com/verifyReceipt"
   },
+
+  "UnionPay": null,
+  "CmbPay": null,
   "ShowUrl": "http://xxx/callback/charge/success"
 }

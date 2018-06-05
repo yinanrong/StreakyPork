@@ -10,6 +10,9 @@ namespace Sp.Settle.Utility
         private static string _jdPayPrivate;
         private static string _jdPayPublic;
         private static string _successContent;
+        private static byte[] _unionPayPublicCert;
+        private static byte[] _unionPayPrivateCert;
+        private static string _cmbPayPublicKey;
 
         public static string AlipayPrivate
         {
@@ -120,6 +123,61 @@ namespace Sp.Settle.Utility
                 }
 
                 return _successContent;
+            }
+        }
+
+        public static byte[] UnionPayPublicCert
+        {
+            get
+            {
+                if (_unionPayPublicCert != null)
+                    return _unionPayPublicCert;
+                using (var ms = new MemoryStream())
+                {
+                    using (var stream = EmbedResourceReader.Read("unionpay_acp_prod_verify_sign.cer"))
+                    {
+                        stream.CopyTo(ms);
+                        _unionPayPublicCert = ms.ToArray();
+                    }
+                }
+
+                return _unionPayPublicCert;
+            }
+        }
+
+        public static byte[] UnionPayPrivateCert
+        {
+            get
+            {
+                if (_unionPayPrivateCert != null)
+                    return _unionPayPrivateCert;
+                using (var ms = new MemoryStream())
+                {
+                    using (var stream = EmbedResourceReader.Read("unionpay_acp_prod_sign.pfx"))
+                    {
+                        stream.CopyTo(ms);
+                        _unionPayPrivateCert = ms.ToArray();
+                    }
+                }
+                return _unionPayPrivateCert;
+            }
+        }
+
+        public static string CmbPayPublicKey
+        {
+            get
+            {
+                if (_cmbPayPublicKey != null)
+                    return _cmbPayPublicKey;
+                using (var stream = EmbedResourceReader.Read("cmb_public.key"))
+                {
+                    using (var reader = new StreamReader(stream))
+                    {
+                        _cmbPayPublicKey = reader.ReadToEnd();
+                    }
+                }
+
+                return _cmbPayPublicKey;
             }
         }
     }

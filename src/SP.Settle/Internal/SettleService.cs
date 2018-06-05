@@ -9,9 +9,9 @@ namespace Sp.Settle.Internal
 {
     internal class SettleService : ISettleService
     {
-        private readonly IIndex<Providers, ISettleChannel> _channels;
+        private readonly IIndex<Provider, ISettleChannel> _channels;
 
-        public SettleService(IIndex<Providers, ISettleChannel> channels)
+        public SettleService(IIndex<Provider, ISettleChannel> channels)
         {
             _channels = channels;
         }
@@ -35,17 +35,18 @@ namespace Sp.Settle.Internal
             return c.RefundAsync(request);
         }
 
-        public Task<string> PaymentCallbackAsync(Providers provider, Func<PaymentCallbackResponse, Task> handle, string input)
-        {
-            var c = _channels[provider];
-            return c.HandlePaymentCallbackAsync(handle, input);
-        }
-
         public Task<PaymentCallbackResponse> GetPaymentResultAsync(PaymentQueryRequest request)
         {
             var p = ChannelConvertor.ToProvider(request.Channel);
             var c = _channels[p];
             return c.GetPaymentResultAsync(request);
+        }
+
+        public Task<string> PaymentCallbackAsync(Provider provider, Func<PaymentCallbackResponse, Task> handle,
+            string input)
+        {
+            var c = _channels[provider];
+            return c.HandlePaymentCallbackAsync(handle, input);
         }
     }
 }

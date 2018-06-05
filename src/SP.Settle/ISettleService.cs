@@ -13,7 +13,7 @@ namespace Sp.Settle
 
         Task<RefundResponse> RefundAsync(RefundRequest request);
 
-        Task<string> PaymentCallbackAsync(Providers provider, Func<PaymentCallbackResponse, Task> handle, string input);
+        Task<string> PaymentCallbackAsync(Provider provider, Func<PaymentCallbackResponse, Task> handle, string input);
 
         Task<PaymentCallbackResponse> GetPaymentResultAsync(PaymentQueryRequest request);
     }

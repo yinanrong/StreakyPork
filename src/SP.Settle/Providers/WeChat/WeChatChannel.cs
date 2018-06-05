@@ -12,7 +12,7 @@ using Sp.Settle.Internal;
 using Sp.Settle.Models;
 using Sp.Settle.Utility;
 
-namespace Sp.Settle.WeChat
+namespace Sp.Settle.Providers.WeChat
 {
     internal class WeChatChannel : BaseChannel, ISettleChannel
     {
@@ -35,20 +35,20 @@ namespace Sp.Settle.WeChat
             inputObj.SetValue("mch_id", _options.WeChat.MchId);
             switch (request.Channel)
             {
-                case Channels.WxPayQr:
+                case Channel.WxPayQr:
                     inputObj.SetValue("trade_type", WeChatPayTradeTypes.NATIVE);
                     inputObj.SetValue("product_id", request.OrderId);
                     break;
-                case Channels.WxPayMobile:
+                case Channel.WxPayMobile:
                     inputObj.SetValue("trade_type", WeChatPayTradeTypes.APP);
                     break;
-                case Channels.WxPayPublic:
+                case Channel.WxPayPublic:
                     inputObj.SetValue("trade_type", WeChatPayTradeTypes.JSAPI);
                     if (string.IsNullOrEmpty(request.OpenId))
                         throw new SettleException("统一支付接口中，缺少必填参数：openid！trade_type为JSAPI时，open_id为必填参数！");
                     inputObj.SetValue("openid", request.OpenId);
                     break;
-                case Channels.WxPayH5:
+                case Channel.WxPayH5:
                     inputObj.SetValue("appid", _options.WeChat.AppId);
                     inputObj.SetValue("mch_id", _options.WeChat.MchId);
                     inputObj.SetValue("trade_type", WeChatPayTradeTypes.MWEB);
@@ -81,14 +81,14 @@ namespace Sp.Settle.WeChat
             var returnParams = new PaymentResponse(request.OrderId);
             switch (request.Channel)
             {
-                case Channels.WxPayQr:
+                case Channel.WxPayQr:
                     if (result.IsSet("code_url"))
                         returnParams = new PaymentResponse(request.OrderId)
                         {
                             Url = result.GetValue<string>("code_url")
                         };
                     break;
-                case Channels.WxPayMobile:
+                case Channel.WxPayMobile:
                     {
                         SettleObject responseObj = new SortedDictionary<string, object>();
                         responseObj.SetValue("appid", _options.WeChat.AppId);
@@ -101,7 +101,7 @@ namespace Sp.Settle.WeChat
                         returnParams.Param = responseObj.GetValues();
                         break;
                     }
-                case Channels.WxPayPublic:
+                case Channel.WxPayPublic:
                     {
                         SettleObject responseObj = new SortedDictionary<string, object>();
                         responseObj.SetValue("appId", _options.WeChat.AppId);
@@ -113,7 +113,7 @@ namespace Sp.Settle.WeChat
                         returnParams .Param = responseObj.GetValues() ;
                         break;
                     }
-                case Channels.WxPayH5:
+                case Channel.WxPayH5:
                 {
                     if (result.IsSet("mweb_url"))
                         returnParams.Url = result.GetValue<string>("mweb_url");

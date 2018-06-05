@@ -4,7 +4,7 @@ namespace Sp.Settle.Models
 {
     public class PaymentRequest
     {
-        public Channels Channel { get; set; }
+        public Channel Channel { get; set; }
         public string IpAddress { get; set; }
         public long OrderId { get; set; }
         public string Subject { get; set; }

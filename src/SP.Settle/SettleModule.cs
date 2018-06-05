@@ -2,12 +2,14 @@
 using System.IO;
 using Autofac;
 using Newtonsoft.Json;
-using Sp.Settle.AliPay;
-using Sp.Settle.ApplePay;
 using Sp.Settle.Constants;
 using Sp.Settle.Internal;
-using Sp.Settle.JdPay;
-using Sp.Settle.WeChat;
+using Sp.Settle.Providers.AliPay;
+using Sp.Settle.Providers.ApplePay;
+using Sp.Settle.Providers.CmbPay;
+using Sp.Settle.Providers.JdPay;
+using Sp.Settle.Providers.UnionPay;
+using Sp.Settle.Providers.WeChat;
 
 namespace Sp.Settle
 {
@@ -31,10 +33,12 @@ namespace Sp.Settle
         {
             builder.Register(c => _options).SingleInstance();
             builder.RegisterType<SettleService>().As<ISettleService>().InstancePerLifetimeScope();
-            builder.RegisterType<AlipayChannel>().Keyed<ISettleChannel>(Providers.Alipay).InstancePerLifetimeScope();
-            builder.RegisterType<WeChatChannel>().Keyed<ISettleChannel>(Providers.WeChat).InstancePerLifetimeScope();
-            builder.RegisterType<JdPayChannel>().Keyed<ISettleChannel>(Providers.JdPay).InstancePerLifetimeScope();
-            builder.RegisterType<ApplePayChannel>().Keyed<ISettleChannel>(Providers.ApplePay).InstancePerLifetimeScope();
+            builder.RegisterType<AlipayChannel>().Keyed<ISettleChannel>(Provider.Alipay).InstancePerLifetimeScope();
+            builder.RegisterType<WeChatChannel>().Keyed<ISettleChannel>(Provider.WeChat).InstancePerLifetimeScope();
+            builder.RegisterType<JdPayChannel>().Keyed<ISettleChannel>(Provider.JdPay).InstancePerLifetimeScope();
+            builder.RegisterType<ApplePayChannel>().Keyed<ISettleChannel>(Provider.ApplePay).InstancePerLifetimeScope();
+            builder.RegisterType<UnionPayChannel>().Keyed<ISettleChannel>(Provider.UnionPay).InstancePerLifetimeScope();
+            builder.RegisterType<CmbPayChannel>().Keyed<ISettleChannel>(Provider.CmbPay).InstancePerLifetimeScope();
         }
     }
 }

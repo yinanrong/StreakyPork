@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2018
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sp.Settle", "SP.Settle\Sp.Settle.csproj", "{6480C757-F32F-4187-820E-224308BEA823}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sp.Settle", "src\SP.Settle\Sp.Settle.csproj", "{6480C757-F32F-4187-820E-224308BEA823}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{44859A8A-FFC9-46CF-BB9C-FD57476F435F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0C3E8CA1-C5A8-460C-A325-B41599525ECE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,7 +23,10 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6480C757-F32F-4187-820E-224308BEA823} = {44859A8A-FFC9-46CF-BB9C-FD57476F435F}
+	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {E6F2D147-EF34-406A-B17B-339EC1C6B164}
+		SolutionGuid = {E886F1AD-8940-4510-97F1-7A81994B35F9}
 	EndGlobalSection
 EndGlobal

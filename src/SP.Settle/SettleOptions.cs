@@ -6,6 +6,8 @@
         public WeChatOption WeChat { get; set; }
         public JdPayOption JdPay { get; set; }
         public ApplePayOption ApplePay { get; set; }
+        public UnionPayOptions UnionPay { get; set; }
+        public CmbPayOptions CmbPay { get; set; }
         public string ShowUrl { get; set; }
     }
 
@@ -38,4 +40,26 @@
     {
         public string VerifyUrl { get; set; }
     }
+
+    public class UnionPayOptions
+    {
+        public string MerId { get; set; }
+        public string Gateway { get; set; }
+        public string PayNotifyUrl { get; set; }
+        public string PrivateKeyPassword { get; set; }
+    }
+
+    public class CmbPayOptions
+    {
+        public string PayUrl { get; set; }
+        public string RefundUrl { get; set; }
+        public string Key { get; set; }
+        public string BranchId { get; set; }
+        public string CoNo { get; set; }
+        public string MchNo { get; set; }
+        public string Operator { get; set; }
+        public string OperatorPassword { get; set; }
+        public string PayNotifyUrl { get; set; }
+    }
+
 }

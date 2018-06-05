@@ -13,7 +13,7 @@ using Sp.Settle.Internal;
 using Sp.Settle.Models;
 using Sp.Settle.Utility;
 
-namespace Sp.Settle.JdPay
+namespace Sp.Settle.Providers.JdPay
 {
     internal class JdPayChannel : BaseChannel, ISettleChannel
     {

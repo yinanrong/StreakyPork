@@ -5,6 +5,6 @@ namespace Sp.Settle.Models
     public class PaymentQueryRequest
     {
         public long OrderId { get; set; }
-        public Channels Channel { get; set; }
+        public Channel Channel { get; set; }
     }
 }

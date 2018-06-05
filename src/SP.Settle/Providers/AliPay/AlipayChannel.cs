@@ -9,7 +9,7 @@ using Sp.Settle.Internal;
 using Sp.Settle.Models;
 using Sp.Settle.Utility;
 
-namespace Sp.Settle.AliPay
+namespace Sp.Settle.Providers.AliPay
 {
     internal class AlipayChannel : BaseChannel, ISettleChannel
     {
@@ -26,14 +26,14 @@ namespace Sp.Settle.AliPay
             InitAlipayData(inputObj);
             switch (request.Channel)
             {
-                case Channels.AlipayH5:
+                case Channel.AlipayH5:
                     inputObj.SetValue("return_url", _options.ShowUrl);
                     inputObj.SetValue("method", "alipay.trade.wap.pay");
                     break;
-                case Channels.AlipayDirectPay:
+                case Channel.AlipayDirectPay:
                     inputObj.SetValue("method", "alipay.trade.page.pay");
                     break;
-                case Channels.AlipayMobile:
+                case Channel.AlipayMobile:
                     inputObj.SetValue("method", "alipay.trade.app.pay");
                     break;
             }
@@ -50,7 +50,7 @@ namespace Sp.Settle.AliPay
             inputObj.SetValue("biz_content", JsonConvert.SerializeObject(bzContent));
             inputObj.SetValue("sign", MakeSign(inputObj));
             var credential = new PaymentResponse(request.OrderId);
-            if (request.Channel == Channels.AlipayMobile)
+            if (request.Channel == Channel.AlipayMobile)
             {
                 credential.Url = _options.Alipay.Gateway;
                 credential.Data = inputObj.ToUrl();
@@ -164,7 +164,7 @@ namespace Sp.Settle.AliPay
 
         public string MakeSign(SettleObject values)
         {
-            return SecretUtil.RsaSign(values.ToUrlForSign(), Config.AlipayPrivate);
+            return SecretUtil.RsaSign256(values.ToUrlForSign(), Config.AlipayPrivate);
         }
 
 
@@ -177,7 +177,7 @@ namespace Sp.Settle.AliPay
 
         private static bool CheckSign(string data, string sign)
         {
-            return SecretUtil.RsaVerify(data, sign, Config.AlipayPublic);
+            return SecretUtil.RsaVerify256(data, sign, Config.AlipayPublic);
         }
 
         private void InitAlipayData(SettleObject inputObj)

@@ -2,7 +2,7 @@
 
 namespace Sp.Settle.Constants
 {
-    public enum Providers
+    public enum Provider
     {
         /// <summary>
         /// 支付宝
@@ -27,6 +27,18 @@ namespace Sp.Settle.Constants
         /// 苹果支付
         /// </summary>
         [Description("苹果支付")]
-        ApplePay = 4
+        ApplePay = 4,
+
+        /// <summary>
+        /// 招行一网通
+        /// </summary>
+        [Description("银联")]
+        UnionPay =5,
+
+        /// <summary>
+        /// 招行一网通
+        /// </summary>
+        [Description("招行一网通")]
+        CmbPay =6
     }
 }

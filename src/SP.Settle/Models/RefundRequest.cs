@@ -18,7 +18,7 @@ namespace Sp.Settle.Models
         /// <summary>
         /// 支付通道
         /// </summary>
-        public Channels Channel { get; set; }
+        public Channel Channel { get; set; }
 
         /// <summary>
         /// 支付流水号

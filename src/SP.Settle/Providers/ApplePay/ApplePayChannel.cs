@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using Sp.Settle.Internal;
 using Sp.Settle.Models;
 
-namespace Sp.Settle.ApplePay
+namespace Sp.Settle.Providers.ApplePay
 {
     internal class ApplePayChannel : BaseChannel, ISettleChannel
     {
