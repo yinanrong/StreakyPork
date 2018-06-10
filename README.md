@@ -92,8 +92,10 @@
           });
       }
 ```
+![图片]()
 
-更多示例参见[sample]()
+更多示例参见[sample](https://github.com/yinanrong/StreakyPork/blob/master/sample/StreakyPor.Sample/Controllers/PaymentSampleController.cs)
 
 # Feedback
 任何问题请在issue中提问或添加微信反馈，谢谢
+![二维码]()
