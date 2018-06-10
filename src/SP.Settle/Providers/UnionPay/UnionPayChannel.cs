@@ -26,7 +26,7 @@ namespace Sp.Settle.Providers.UnionPay
                 X509KeyStorageFlags.MachineKeySet);
         }
 
-        public Task<PaymentResponse> CreateAsync(PaymentRequest request)
+        public Task<PaymentResponse> PayAsync(PaymentRequest request)
         {
             SettleObject inputObj = new SortedDictionary<string, object>(StringComparer.Ordinal);
             InitUniPayData(inputObj);
@@ -51,7 +51,7 @@ namespace Sp.Settle.Providers.UnionPay
             var code = inputData.GetValue<string>("respCode");
             var r = new PaymentCallbackResponse
             {
-                OrderId = inputData.GetValue<long>("orderId"),
+                OrderId = inputData.GetValue<string>("orderId"),
                 ProviderId = inputData.GetValue<string>("queryId"),
                 Success = code == "00" || code == "A6"
             };
@@ -75,7 +75,7 @@ namespace Sp.Settle.Providers.UnionPay
             var code = responseObj.GetValue<string>("respCode");
             return new RefundResponse
             {
-                RefundId = responseObj.GetValue<long>("orderId"),
+                RefundId = responseObj.GetValue<string>("orderId"),
                 ProviderId = responseObj.GetValue<string>("queryId"),
                 Result = code == "00" || code == "A6",
                 Message = responseObj.GetValue<string>("respMsg")

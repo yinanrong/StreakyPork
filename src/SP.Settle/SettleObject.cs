@@ -136,45 +136,31 @@ namespace Sp.Settle
                     SetValue(ent.Key, ent.Value.ToString());
         }
 
-        public static Dictionary<string, StringValues> ParseNullableQuery(string queryString,string ignoreTrimKey="sign")
+        public static Dictionary<string, StringValues> ParseNullableQuery(string queryString,
+            string ignoreTrimKey = "sign")
         {
             var accumulator = new KeyValueAccumulator();
 
-            if (string.IsNullOrEmpty(queryString) || queryString == "?")
-            {
-                return null;
-            }
+            if (string.IsNullOrEmpty(queryString) || queryString == "?") return null;
 
             var scanIndex = 0;
-            if (queryString[0] == '?')
-            {
-                scanIndex = 1;
-            }
+            if (queryString[0] == '?') scanIndex = 1;
 
             var textLength = queryString.Length;
             var equalIndex = queryString.IndexOf('=');
-            if (equalIndex == -1)
-            {
-                equalIndex = textLength;
-            }
+            if (equalIndex == -1) equalIndex = textLength;
 
             while (scanIndex < textLength)
             {
                 var delimiterIndex = queryString.IndexOf('&', scanIndex);
-                if (delimiterIndex == -1)
-                {
-                    delimiterIndex = textLength;
-                }
+                if (delimiterIndex == -1) delimiterIndex = textLength;
 
                 if (equalIndex < delimiterIndex)
                 {
-                    while (scanIndex != equalIndex && char.IsWhiteSpace(queryString[scanIndex]))
-                    {
-                        ++scanIndex;
-                    }
+                    while (scanIndex != equalIndex && char.IsWhiteSpace(queryString[scanIndex])) ++scanIndex;
                     var name = queryString.Substring(scanIndex, equalIndex - scanIndex);
                     var value = queryString.Substring(equalIndex + 1, delimiterIndex - equalIndex - 1);
-                    if (name==ignoreTrimKey)
+                    if (name == ignoreTrimKey)
                     {
                         accumulator.Append(
                             Uri.UnescapeDataString(name),
@@ -188,27 +174,19 @@ namespace Sp.Settle
                             Uri.UnescapeDataString(value.Replace('+', ' ')));
                         equalIndex = queryString.IndexOf('=', delimiterIndex);
                     }
-                 
-                    if (equalIndex == -1)
-                    {
-                        equalIndex = textLength;
-                    }
+
+                    if (equalIndex == -1) equalIndex = textLength;
                 }
                 else
                 {
                     if (delimiterIndex > scanIndex)
-                    {
                         accumulator.Append(queryString.Substring(scanIndex, delimiterIndex - scanIndex), string.Empty);
-                    }
                 }
 
                 scanIndex = delimiterIndex + 1;
             }
 
-            if (!accumulator.HasValues)
-            {
-                return null;
-            }
+            if (!accumulator.HasValues) return null;
 
             return accumulator.GetResults();
         }

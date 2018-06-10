@@ -23,7 +23,7 @@ namespace Sp.Settle.Providers.WeChat
             _options = options;
         }
 
-        public async Task<PaymentResponse> CreateAsync(PaymentRequest request)
+        public async Task<PaymentResponse> PayAsync(PaymentRequest request)
         {
             SettleObject inputObj = new SortedDictionary<string, object>();
             inputObj.SetValue("total_fee", request.Amount);
@@ -89,36 +89,36 @@ namespace Sp.Settle.Providers.WeChat
                         };
                     break;
                 case Channel.WxPayMobile:
-                    {
-                        SettleObject responseObj = new SortedDictionary<string, object>();
-                        responseObj.SetValue("appid", _options.WeChat.AppId);
-                        responseObj.SetValue("partnerid", _options.WeChat.MchId);
-                        responseObj.SetValue("prepayid", result.GetValue<string>("prepay_id"));
-                        responseObj.SetValue("noncestr", GenerateNonceStr());
-                        responseObj.SetValue("timestamp", GenerateTimeStamp());
-                        responseObj.SetValue("package", "Sign=WXPay");
-                        responseObj.SetValue("sign", MakeSign(responseObj));
-                        returnParams.Param = responseObj.GetValues();
-                        break;
-                    }
+                {
+                    SettleObject responseObj = new SortedDictionary<string, object>();
+                    responseObj.SetValue("appid", _options.WeChat.AppId);
+                    responseObj.SetValue("partnerid", _options.WeChat.MchId);
+                    responseObj.SetValue("prepayid", result.GetValue<string>("prepay_id"));
+                    responseObj.SetValue("noncestr", GenerateNonceStr());
+                    responseObj.SetValue("timestamp", GenerateTimeStamp());
+                    responseObj.SetValue("package", "Sign=WXPay");
+                    responseObj.SetValue("sign", MakeSign(responseObj));
+                    returnParams.Param = responseObj.GetValues();
+                    break;
+                }
                 case Channel.WxPayPublic:
-                    {
-                        SettleObject responseObj = new SortedDictionary<string, object>();
-                        responseObj.SetValue("appId", _options.WeChat.AppId);
-                        responseObj.SetValue("timeStamp", GenerateTimeStamp());
-                        responseObj.SetValue("nonceStr", GenerateNonceStr());
-                        responseObj.SetValue("package", $"prepay_id={result.GetValue<string>("prepay_id")}");
-                        responseObj.SetValue("signType", "MD5");
-                        responseObj.SetValue("paySign", MakeSign(responseObj));
-                        returnParams .Param = responseObj.GetValues() ;
-                        break;
-                    }
+                {
+                    SettleObject responseObj = new SortedDictionary<string, object>();
+                    responseObj.SetValue("appId", _options.WeChat.AppId);
+                    responseObj.SetValue("timeStamp", GenerateTimeStamp());
+                    responseObj.SetValue("nonceStr", GenerateNonceStr());
+                    responseObj.SetValue("package", $"prepay_id={result.GetValue<string>("prepay_id")}");
+                    responseObj.SetValue("signType", "MD5");
+                    responseObj.SetValue("paySign", MakeSign(responseObj));
+                    returnParams.Param = responseObj.GetValues();
+                    break;
+                }
                 case Channel.WxPayH5:
                 {
                     if (result.IsSet("mweb_url"))
                         returnParams.Url = result.GetValue<string>("mweb_url");
-                        break;
-                    }
+                    break;
+                }
             }
 
             return returnParams;
@@ -130,7 +130,7 @@ namespace Sp.Settle.Providers.WeChat
             if (!CheckSign(inputData)) throw new SettleException("微信支付异步回调验签失败");
             var r = new PaymentCallbackResponse
             {
-                OrderId = inputData.GetValue<long>("out_trade_no"),
+                OrderId = inputData.GetValue<string>("out_trade_no"),
                 ProviderId = inputData.GetValue<string>("transaction_id"),
                 Success = inputData.GetValue<string>("result_code") == "SUCCESS"
             };
@@ -166,10 +166,10 @@ namespace Sp.Settle.Providers.WeChat
         public async Task<RefundResponse> RefundAsync(RefundRequest request)
         {
             SettleObject inputObj = new SortedDictionary<string, object>();
-            inputObj.SetValue("out_trade_no", request.ChargeId);
+            inputObj.SetValue("out_trade_no", request.OrderId);
             inputObj.SetValue("refund_fee", request.RefundAmount);
             inputObj.SetValue("out_refund_no", request.RefundId);
-            inputObj.SetValue("total_fee", request.ChargeAmount);
+            inputObj.SetValue("total_fee", request.PayAmount);
             inputObj.SetValue("appid", _options.WeChat.AppId);
             inputObj.SetValue("mch_id", _options.WeChat.MchId);
             inputObj.SetValue("nonce_str", Guid.NewGuid().ToString().Replace("-", ""));
@@ -245,7 +245,7 @@ namespace Sp.Settle.Providers.WeChat
             var nodes = xmlNode.ChildNodes;
             foreach (var xn in nodes)
             {
-                var xe = (XmlElement)xn;
+                var xe = (XmlElement) xn;
                 dic[xe.Name] = xe.InnerText; //获取xml的键值对到PaymentData内部的数据中
             }
 

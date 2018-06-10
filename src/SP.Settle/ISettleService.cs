@@ -7,9 +7,7 @@ namespace Sp.Settle
 {
     public interface ISettleService
     {
-        Task<PaymentResponse> CreateAsync(PaymentRequest request);
-
-        Task<string> SuccessContentAsync();
+        Task<PaymentResponse> PayAsync(PaymentRequest request);
 
         Task<RefundResponse> RefundAsync(RefundRequest request);
 

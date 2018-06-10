@@ -6,7 +6,7 @@ namespace Sp.Settle
 {
     internal interface ISettleChannel
     {
-        Task<PaymentResponse> CreateAsync(PaymentRequest request);
+        Task<PaymentResponse> PayAsync(PaymentRequest request);
 
         Task<string> HandlePaymentCallbackAsync(Func<PaymentCallbackResponse, Task> handle, string input);
 

@@ -15,7 +15,7 @@ namespace Sp.Settle.Providers.ApplePay
             _options = options;
         }
 
-        public async Task<PaymentResponse> CreateAsync(PaymentRequest request)
+        public async Task<PaymentResponse> PayAsync(PaymentRequest request)
         {
             await Task.FromResult(0);
             return new PaymentResponse(request.OrderId);
@@ -56,7 +56,7 @@ namespace Sp.Settle.Providers.ApplePay
 
         internal class VerifyRequest
         {
-            [JsonProperty("order_id")] public long OrderId { get; set; }
+            [JsonProperty("order_id")] public string OrderId { get; set; }
 
             [JsonProperty("receipt_data")] public string ReceiptData { get; set; }
         }

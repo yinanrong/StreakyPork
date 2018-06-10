@@ -33,7 +33,7 @@ namespace Sp.Settle.Providers.JdPay
                 if (string.IsNullOrEmpty(_xmlPrivateKey))
                 {
                     var privateKeyParam =
-                        (RsaPrivateCrtKeyParameters)PrivateKeyFactory.CreateKey(
+                        (RsaPrivateCrtKeyParameters) PrivateKeyFactory.CreateKey(
                             Convert.FromBase64String(Config.JdPayPrivate));
                     _xmlPrivateKey =
                         $"<RSAKeyValue><Modulus>{Convert.ToBase64String(privateKeyParam.Modulus.ToByteArrayUnsigned())}</Modulus><Exponent>{Convert.ToBase64String(privateKeyParam.PublicExponent.ToByteArrayUnsigned())}</Exponent><P>{Convert.ToBase64String(privateKeyParam.P.ToByteArrayUnsigned())}</P><Q>{Convert.ToBase64String(privateKeyParam.Q.ToByteArrayUnsigned())}</Q><DP>{Convert.ToBase64String(privateKeyParam.DP.ToByteArrayUnsigned())}</DP><DQ>{Convert.ToBase64String(privateKeyParam.DQ.ToByteArrayUnsigned())}</DQ><InverseQ>{Convert.ToBase64String(privateKeyParam.QInv.ToByteArrayUnsigned())}</InverseQ><D>{Convert.ToBase64String(privateKeyParam.Exponent.ToByteArrayUnsigned())}</D></RSAKeyValue>";
@@ -50,7 +50,7 @@ namespace Sp.Settle.Providers.JdPay
                 if (string.IsNullOrEmpty(_xmlPublicKey))
                 {
                     var publicKeyParam =
-                        (RsaKeyParameters)PublicKeyFactory.CreateKey(Convert.FromBase64String(Config.JdPayPublic));
+                        (RsaKeyParameters) PublicKeyFactory.CreateKey(Convert.FromBase64String(Config.JdPayPublic));
                     _xmlPublicKey =
                         $"<RSAKeyValue><Modulus>{Convert.ToBase64String(publicKeyParam.Modulus.ToByteArrayUnsigned())}</Modulus><Exponent>{Convert.ToBase64String(publicKeyParam.Exponent.ToByteArrayUnsigned())}</Exponent></RSAKeyValue>";
                 }
@@ -59,7 +59,7 @@ namespace Sp.Settle.Providers.JdPay
             }
         }
 
-        public async Task<PaymentResponse> CreateAsync(PaymentRequest request)
+        public async Task<PaymentResponse> PayAsync(PaymentRequest request)
         {
             var key = Convert.FromBase64String(_options.JdPay.Key);
             SettleObject inputObj = new SortedDictionary<string, object>();
@@ -111,7 +111,7 @@ namespace Sp.Settle.Providers.JdPay
                 var status = root.Element("status").Value;
                 r.Success = status == "2";
                 var orderId = root.Element("tradeNum").Value;
-                r.OrderId = Convert.ToInt64(orderId);
+                r.OrderId = Convert.ToString(orderId);
                 var signNode = root.Element("sign");
                 var sign = signNode.Value;
                 signNode.Remove();

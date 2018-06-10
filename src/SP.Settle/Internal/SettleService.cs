@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Autofac.Features.Indexed;
 using Sp.Settle.Constants;
 using Sp.Settle.Models;
-using Sp.Settle.Utility;
 
 namespace Sp.Settle.Internal
 {
@@ -16,16 +15,11 @@ namespace Sp.Settle.Internal
             _channels = channels;
         }
 
-        public Task<PaymentResponse> CreateAsync(PaymentRequest request)
+        public Task<PaymentResponse> PayAsync(PaymentRequest request)
         {
             var p = ChannelConvertor.ToProvider(request.Channel);
             var c = _channels[p];
-            return c.CreateAsync(request);
-        }
-
-        public Task<string> SuccessContentAsync()
-        {
-            return Task.FromResult(Config.SuccessContent);
+            return c.PayAsync(request);
         }
 
         public Task<RefundResponse> RefundAsync(RefundRequest request)

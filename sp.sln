@@ -7,7 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sp.Settle", "src\SP.Settle\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{44859A8A-FFC9-46CF-BB9C-FD57476F435F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0C3E8CA1-C5A8-460C-A325-B41599525ECE}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{DF441A15-AB1A-40A0-B848-9B769D437549}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StreakyPor.Sample", "sample\StreakyPor.Sample\StreakyPor.Sample.csproj", "{DFB4D6BC-F9BE-4195-984B-DC9FB727CDC0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,12 +21,17 @@ Global
 		{6480C757-F32F-4187-820E-224308BEA823}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6480C757-F32F-4187-820E-224308BEA823}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6480C757-F32F-4187-820E-224308BEA823}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFB4D6BC-F9BE-4195-984B-DC9FB727CDC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFB4D6BC-F9BE-4195-984B-DC9FB727CDC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFB4D6BC-F9BE-4195-984B-DC9FB727CDC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFB4D6BC-F9BE-4195-984B-DC9FB727CDC0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{6480C757-F32F-4187-820E-224308BEA823} = {44859A8A-FFC9-46CF-BB9C-FD57476F435F}
+		{DFB4D6BC-F9BE-4195-984B-DC9FB727CDC0} = {DF441A15-AB1A-40A0-B848-9B769D437549}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E886F1AD-8940-4510-97F1-7A81994B35F9}

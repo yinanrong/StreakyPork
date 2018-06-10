@@ -61,5 +61,4 @@
         public string OperatorPassword { get; set; }
         public string PayNotifyUrl { get; set; }
     }
-
 }

@@ -22,7 +22,7 @@ namespace Sp.Settle.Providers.CmbPay
             _options = options;
         }
 
-        public Task<PaymentResponse> CreateAsync(PaymentRequest request)
+        public Task<PaymentResponse> PayAsync(PaymentRequest request)
         {
             var inputObj = new SettleObject();
             var now = DateTime.Now;
@@ -53,7 +53,7 @@ namespace Sp.Settle.Providers.CmbPay
             if (!CheckSign(inputData)) throw new SettleException("招行一网通支付异步回调验签失败");
             var r = new PaymentCallbackResponse
             {
-                OrderId = inputData.GetValue<long>("BillNo"),
+                OrderId = inputData.GetValue<string>("BillNo"),
                 ProviderId = inputData.GetValue<string>("Msg")?.Substring(0, 38),
                 Success = inputData.GetValue<string>("Succeed").ToLower() == "y"
             };
@@ -73,8 +73,8 @@ namespace Sp.Settle.Providers.CmbPay
             head.SetValue("Command", "Refund_No_Dup");
             inputObj.SetValue("Head", head.GetValues());
             var body = new SettleObject();
-            body.SetValue("Date", request.ChargeTime.ToString("yyyyMMdd"));
-            body.SetValue("BillNo", request.ChargeId);
+            body.SetValue("Date", request.PayTime.ToString("yyyyMMdd"));
+            body.SetValue("BillNo", request.OrderId);
             body.SetValue("RefundNo", request.RefundId);
             body.SetValue("Amount", request.RefundAmount / 100m);
             body.SetValue("Desc", "refund");

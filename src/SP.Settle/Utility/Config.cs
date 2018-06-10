@@ -9,7 +9,6 @@ namespace Sp.Settle.Utility
         private static byte[] _weChatCert;
         private static string _jdPayPrivate;
         private static string _jdPayPublic;
-        private static string _successContent;
         private static byte[] _unionPayPublicCert;
         private static byte[] _unionPayPrivateCert;
         private static string _cmbPayPublicKey;
@@ -107,25 +106,6 @@ namespace Sp.Settle.Utility
             }
         }
 
-        public static string SuccessContent
-        {
-            get
-            {
-                if (_successContent == null)
-                {
-                    using (var stream = EmbedResourceReader.Read("show_page.html"))
-                    {
-                        using (var reader = new StreamReader(stream))
-                        {
-                            _successContent = reader.ReadToEnd();
-                        }
-                    }
-                }
-
-                return _successContent;
-            }
-        }
-
         public static byte[] UnionPayPublicCert
         {
             get
@@ -159,6 +139,7 @@ namespace Sp.Settle.Utility
                         _unionPayPrivateCert = ms.ToArray();
                     }
                 }
+
                 return _unionPayPrivateCert;
             }
         }

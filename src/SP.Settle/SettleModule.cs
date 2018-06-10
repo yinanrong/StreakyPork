@@ -20,10 +20,7 @@ namespace Sp.Settle
         public SettleModule()
         {
             var basePath = AppDomain.CurrentDomain.BaseDirectory;
-            if (!basePath.EndsWith("bin", StringComparison.CurrentCultureIgnoreCase))
-            {
-                basePath = $@"{basePath}\bin";
-            }
+            if (!basePath.EndsWith("bin", StringComparison.CurrentCultureIgnoreCase)) basePath = $@"{basePath}\bin";
 
             var json = File.ReadAllText($@"{basePath}\SettleOptions.json");
             _options = JsonConvert.DeserializeObject<SettleOptions>(json);

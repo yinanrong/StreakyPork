@@ -20,7 +20,7 @@ namespace Sp.Settle.Providers.AliPay
             _options = options;
         }
 
-        public async Task<PaymentResponse> CreateAsync(PaymentRequest request)
+        public async Task<PaymentResponse> PayAsync(PaymentRequest request)
         {
             SettleObject inputObj = new SortedDictionary<string, object>();
             InitAlipayData(inputObj);
@@ -75,7 +75,7 @@ namespace Sp.Settle.Providers.AliPay
                 if (!CheckSign(inputData)) throw new SettleException("支付宝支付异步回调验签失败");
                 var r = new PaymentCallbackResponse
                 {
-                    OrderId = inputData.GetValue<long>("out_trade_no"),
+                    OrderId = inputData.GetValue<string>("out_trade_no"),
                     ProviderId = inputData.GetValue<string>("trade_no"),
                     Success = true
                 };
@@ -92,7 +92,7 @@ namespace Sp.Settle.Providers.AliPay
             inputObj.SetValue("method", "alipay.trade.refund");
             var bzContent = new
             {
-                out_trade_no = request.ChargeId,
+                out_trade_no = request.OrderId,
                 refund_amount = request.RefundAmount / 100m,
                 refund_reason = request.Description,
                 out_request_no = request.RefundId
@@ -136,7 +136,7 @@ namespace Sp.Settle.Providers.AliPay
             SettleObject inputObj = new SortedDictionary<string, object>();
             InitAlipayData(inputObj);
             inputObj.SetValue("method", "alipay.trade.query");
-            var bzContent = new { out_trade_no = request.OrderId };
+            var bzContent = new {out_trade_no = request.OrderId};
             inputObj.SetValue("biz_content", JsonConvert.SerializeObject(bzContent));
             inputObj.SetValue("sign", MakeSign(inputObj));
             var result = await GetAsStringAsync($"{_options.Alipay.Gateway}?{inputObj.ToUrl()}");
