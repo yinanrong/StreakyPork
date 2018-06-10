@@ -92,10 +92,10 @@
           });
       }
 ```
-![图片]()
+![图片](https://github.com/yinanrong/StreakyPork/blob/master/sample/StreakyPor.Sample/demo.png)
 
 更多示例参见[sample](https://github.com/yinanrong/StreakyPork/blob/master/sample/StreakyPor.Sample/Controllers/PaymentSampleController.cs)
 
 # Feedback
 任何问题请在issue中提问或添加微信反馈，谢谢
-![二维码]()
+![二维码](https://github.com/xfbmx/document/blob/master/qrcode/wx_yar.jpg)
