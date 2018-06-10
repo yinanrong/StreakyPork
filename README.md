@@ -60,17 +60,17 @@
         /// </summary>
         CmbPayMobile=61
 ```
-
+## 注：当前版本仅支持使用autofac作为依赖注入的容器，若使用其它容器或不使用容器请自行更改[`SettleModule`](https://github.com/yinanrong/StreakyPork/blob/master/src/SP.Settle/SettleModule.cs)中的代码
 # 官方文档列表 
 
 [官方文档列表](./DOC.md)
 
 # 开始使用
 - 安装依赖 autofac
-- 在启动项目中添加以下代码（本项目以owin项目为例）
+- 在项目启动时添加以下代码，以便将支付sdk用到的服务注入autofac容器中
 ```c#
 
-     var builder = new ContainerBuilder();
+     //var builder = new ContainerBuilder(); //autofac的容器实例
      builder.RegisterModule<SettleModule>();
 ```
 
@@ -101,3 +101,6 @@
 # Feedback
 任何问题请在issue中提问或添加微信反馈，谢谢
 ![二维码](https://github.com/xfbmx/document/blob/master/qrcode/wx_yar.jpg)
+
+# 打赏
+![二维码](https://github.com/xfbmx/document/blob/master/qrcode/wx_zsm_yar.jpg)
