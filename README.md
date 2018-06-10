@@ -74,7 +74,7 @@
      builder.RegisterModule<SettleModule>();
 ```
 
-- 在controller中注入`ISettleService`
+- 在controller中注入`ISettleService`并生成实例`_settleService`，然后调用相应方法即可
 ```c#
 
       [HttpPost]
